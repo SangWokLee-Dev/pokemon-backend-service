@@ -13,7 +13,7 @@ COPY . .
 RUN gradle clean build
 
 # actual container
-FROM adoptopenjdk/openjdk11:alpine-jre
+FROM openjdk:11
 ENV ARTIFACT_NAME=backend.jar
 ENV APP_HOME=/usr/app/
 
