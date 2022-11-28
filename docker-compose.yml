@@ -1,0 +1,14 @@
+version: "v1"
+services:
+  pokemon-backend-service:
+    container_name: pokemon-backend-service
+    restart: always
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    environment:
+      - APP_CACHES_POKEMON_DURATION=60
+      - APP_CACHES_POKEMON_SIZE=10000
+      - APP_CACHES_TRANSLATION_DURATION=60
+      - APP_CACHES_TRANSLATION_SIZE=10000
