@@ -1,6 +1,7 @@
 version: "v1"
 services:
   pokemon-backend-service:
+    image: pokemon-backend-service
     container_name: pokemon-backend-service
     restart: always
     build:
