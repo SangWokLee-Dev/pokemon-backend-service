@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -64,10 +65,15 @@ public class PokemonHttpClientTest {
     String actualPokemonName = actualPokemonContext.read("$['name']");
     String actualPokemonHabitat = actualPokemonContext.read("$['habitat']['name']");
     Boolean actualPokemonIsLegendary = actualPokemonContext.read("$['is_legendary']");
+    List<String> actualPokemonDescriptions =
+        actualPokemonContext.read("$['flavor_text_entries'][*]['flavor_text']");
     assertThat(actualPokemonResponseStatusCode).isEqualTo(200);
     assertThat(actualPokemonName).isEqualTo("pikachu");
     assertThat(actualPokemonHabitat).isEqualTo("forest");
     assertThat(actualPokemonIsLegendary).isEqualTo(false);
+    assertThat(actualPokemonDescriptions)
+        .contains(
+            "When several of these POKéMON gather,\ntheir electricity can build and cause\nlightning storms.");
   }
 
   @Test
