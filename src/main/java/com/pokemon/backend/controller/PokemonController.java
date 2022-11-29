@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("/pokemon")
 public class PokemonController {
-
   @Autowired private PokemonService pokemonService;
 
   @GetMapping("/{name}")
