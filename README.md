@@ -35,6 +35,14 @@ Please execute the following command from the project root directory to run poke
 gradle test
 ```
 
+## API documentation
+
+Pokemon backend service API documentation is available in the following URL.
+
+```
+http://localhost:8080/swagger-ui/index.html#/
+```
+
 ## How to test REST API with postman
 
 Please locate to postman directory and import following postman collections stored under this directory.
