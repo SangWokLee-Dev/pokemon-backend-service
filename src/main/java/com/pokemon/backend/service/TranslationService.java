@@ -14,12 +14,11 @@ import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
-import static com.pokemon.backend.http.translation.constant.TranslationUrl.SHAKESPEARE_TRANSLATION_URL;
-import static com.pokemon.backend.http.translation.constant.TranslationUrl.YODA_TRANSLATION_URL;
-
 @Service
 @Log4j2
 public class TranslationService {
+  private static final String YODA_TRANSLATION_URL = "yoda";
+  private static final String SHAKESPEARE_TRANSLATION_URL = "shakespeare";
   @Autowired private TranslationHttpClient translationHttpClient;
   @Autowired private JsonPathConfig jsonPathConfig;
 

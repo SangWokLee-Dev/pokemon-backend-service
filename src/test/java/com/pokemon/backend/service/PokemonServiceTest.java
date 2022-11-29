@@ -1,31 +1,55 @@
 package com.pokemon.backend.service;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.pokemon.backend.model.pokemon.Pokemon;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class PokemonServiceTest {
   @Autowired private PokemonService pokemonService;
+  static WireMockServer wireMockServer = new WireMockServer(options().port(8080));
+
+  @BeforeAll
+  public static void beforeAll() {
+    wireMockServer.start();
+  }
+
+  @AfterAll
+  public static void afterAll() {
+    wireMockServer.stop();
+  }
+
+  @AfterEach
+  public void afterEach() {
+    wireMockServer.resetAll();
+  }
 
   @Test
-  @DisplayName("should return pokemon without description translated")
   public void shouldReturnPokemonWithoutDescriptionTranslated()
-      throws URISyntaxException, ExecutionException, InterruptedException {
+      throws URISyntaxException, IOException, ExecutionException, InterruptedException {
     // given
     String pokemonName = "pikachu";
+    String mockPokemonResponseBody =
+        Files.readString(Path.of("src/test/resources/data/pikachu.json"));
     // when
-    Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, false);
+    stubFor(
+        get(urlEqualTo("/pokemon-species/pikachu"))
+            .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
+    Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, false);
     assertThat(actualPokemon.getName()).isEqualTo("pikachu");
     assertThat(actualPokemon.getHabitat()).isEqualTo("forest");
     assertThat(actualPokemon.getIsLegendary()).isEqualTo(false);
@@ -36,6 +60,10 @@ public class PokemonServiceTest {
   public void shouldThrowNotFoundExceptionWhenPokemonIsNotFoundFromServer() {
     // given
     String pokemonName = "invalid_pokemon";
+    // when
+    stubFor(
+        get(urlEqualTo("/pokemon-species/invalid_pokemon"))
+            .willReturn(aResponse().withStatus(404).withBody("Not Found")));
     // then
     ResponseStatusException thrown =
         Assertions.assertThrows(
@@ -46,13 +74,18 @@ public class PokemonServiceTest {
   @Test
   @DisplayName("should return pokemon with description translated when habitat is cave")
   public void shouldReturnPokemonWithDescriptionTranslatedWhenHabitatIsCave()
-      throws URISyntaxException, ExecutionException, InterruptedException {
+      throws URISyntaxException, ExecutionException, InterruptedException, IOException {
     // given
-    String pokemonName = "zubat";
+    String pokemonName = "diglett";
+    String mockPokemonResponseBody =
+        Files.readString(Path.of("src/test/resources/data/diglett.json"));
     // when
-    Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, true);
+    stubFor(
+        get(urlEqualTo("/pokemon-species/diglett"))
+            .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
-    assertThat(actualPokemon.getName()).isEqualTo("zubat");
+    Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, true);
+    assertThat(actualPokemon.getName()).isEqualTo("diglett");
     assertThat(actualPokemon.getHabitat()).isEqualTo("cave");
     assertThat(actualPokemon.getIsLegendary()).isEqualTo(false);
   }
@@ -60,12 +93,17 @@ public class PokemonServiceTest {
   @Test
   @DisplayName("should return pokemon with description translated when pokemon is legendary")
   public void shouldReturnPokemonWithDescriptionTranslatedWhenPokemonIsLegendary()
-      throws URISyntaxException, ExecutionException, InterruptedException {
+      throws URISyntaxException, ExecutionException, InterruptedException, IOException {
     // given
     String pokemonName = "mewtwo";
+    String mockPokemonResponseBody =
+        Files.readString(Path.of("src/test/resources/data/mewtwo.json"));
     // when
-    Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, true);
+    stubFor(
+        get(urlEqualTo("/pokemon-species/mewtwo"))
+            .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
+    Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, true);
     assertThat(actualPokemon.getName()).isEqualTo("mewtwo");
     assertThat(actualPokemon.getHabitat()).isEqualTo("rare");
     assertThat(actualPokemon.getIsLegendary()).isEqualTo(true);

@@ -2,6 +2,7 @@ package com.pokemon.backend.http.translation;
 
 import com.pokemon.backend.http.AbstractHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,17 +19,19 @@ import static com.pokemon.backend.config.CacheConfig.TRANSLATION_CACHE_NAME;
 
 @Service
 public class TranslationHttpClient {
+  @Value("${app.base.url.translation}")
+  private String translationBaseUrl;
+
   @Autowired private AbstractHttpClient abstractHttpClient;
 
   @Cacheable(cacheNames = TRANSLATION_CACHE_NAME, unless = "#result.statusCode() != 200")
   public HttpResponse<String> getTranslatedText(String url, String text)
       throws URISyntaxException, ExecutionException, InterruptedException {
-    String translationRequestBody = "text=" + text;
     HttpRequest request =
         HttpRequest.newBuilder()
-            .uri(new URI(url))
+            .uri(new URI(translationBaseUrl + url))
             .version(HttpClient.Version.HTTP_2)
-            .POST(HttpRequest.BodyPublishers.ofString(translationRequestBody))
+            .POST(HttpRequest.BodyPublishers.ofString("text=" + text))
             .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .build();
     return abstractHttpClient.getResponse(request);
