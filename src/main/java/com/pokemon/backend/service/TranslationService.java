@@ -7,6 +7,7 @@ import com.pokemon.backend.http.translation.TranslationHttpClient;
 import com.pokemon.backend.model.pokemon.Habitat;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
@@ -40,10 +41,11 @@ public class TranslationService {
     try {
       HttpResponse<String> translationResponse =
           translationHttpClient.getTranslatedText(translationUrl, text);
-      String translationResponseBody = translationResponse.body();
-      DocumentContext translationContext =
-          JsonPath.using(jsonPathConfig.getJsonPathConfig()).parse(translationResponseBody);
-      String translatedText = translationContext.read("$['contents']['translated']");
+      int translationResponseStatusCode = translationResponse.statusCode();
+      String translatedText =
+          translationResponseStatusCode == HttpStatus.OK.value()
+              ? getTranslatedText(translationResponse)
+              : null;
       log.info(
           "Received translated text: {} from translation url: {} with original text: {}",
           translatedText,
@@ -54,6 +56,13 @@ public class TranslationService {
       log.error("Failed to translate text: " + text + " due to: ", exception);
     }
     return text;
+  }
+
+  private String getTranslatedText(HttpResponse<String> translationResponse) {
+    String translationResponseBody = translationResponse.body();
+    DocumentContext translationContext =
+        JsonPath.using(jsonPathConfig.getJsonPathConfig()).parse(translationResponseBody);
+    return translationContext.read("$['contents']['translated']");
   }
 
   private String getTranslationUrl(String habitat, Boolean isLegendary) {
