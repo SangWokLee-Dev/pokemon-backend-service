@@ -1,0 +1,46 @@
+{
+  "info": {
+    "_postman_id": "9f7fdb80-77ec-4310-ae28-f4b1586899d9",
+    "name": "pokemon-backend-service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get pokemon",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/pokemon/pikachu",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "pokemon",
+            "pikachu"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get pokemon with description translated",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/pokemon/translated/pikachu",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "pokemon",
+            "translated",
+            "pikachu"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
