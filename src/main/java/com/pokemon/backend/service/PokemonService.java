@@ -66,10 +66,12 @@ public class PokemonService {
       Boolean isTranslated, DocumentContext pokemonContext, String habitat, Boolean isLegendary) {
     List<String> englishDescriptions = getDescriptionsByLanguage(pokemonContext, Language.EN.code);
     String anyEnglishDescription = englishDescriptions.stream().findAny().orElse(null);
+    String formattedEnglishDescription =
+        anyEnglishDescription != null ? anyEnglishDescription.replaceAll("[\n\f]", " ") : null;
     return isTranslated
         ? translationService.getTranslatedPokemonDescription(
-            anyEnglishDescription, habitat, isLegendary)
-        : anyEnglishDescription;
+            formattedEnglishDescription, habitat, isLegendary)
+        : formattedEnglishDescription;
   }
 
   private List<String> getDescriptionsByLanguage(DocumentContext pokemonContext, String language) {
