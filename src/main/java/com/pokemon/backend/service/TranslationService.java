@@ -17,8 +17,8 @@ import java.util.concurrent.ExecutionException;
 @Service
 @Log4j2
 public class TranslationService {
-  private static final String YODA_TRANSLATION_URL = "yoda";
-  private static final String SHAKESPEARE_TRANSLATION_URL = "shakespeare";
+  private static final String YODA_TRANSLATION_URL = "/translate/yoda";
+  private static final String SHAKESPEARE_TRANSLATION_URL = "/translate/shakespeare";
   @Autowired private TranslationHttpClient translationHttpClient;
   @Autowired private JsonPathConfig jsonPathConfig;
 

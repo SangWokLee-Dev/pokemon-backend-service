@@ -5,6 +5,7 @@ import com.pokemon.backend.model.pokemon.Pokemon;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class PokemonServiceTest {
         Files.readString(Path.of("src/test/resources/data/pikachu.json"));
     // when
     stubFor(
-        get(urlEqualTo("/pokemon-species/pikachu"))
+        get(urlEqualTo("/api/v2/pokemon-species/pikachu"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, false);
@@ -62,7 +63,7 @@ public class PokemonServiceTest {
     String pokemonName = "invalid_pokemon";
     // when
     stubFor(
-        get(urlEqualTo("/pokemon-species/invalid_pokemon"))
+        get(urlEqualTo("/api/v2/pokemon-species/invalid_pokemon"))
             .willReturn(aResponse().withStatus(404).withBody("Not Found")));
     // then
     ResponseStatusException thrown =
@@ -81,7 +82,7 @@ public class PokemonServiceTest {
         Files.readString(Path.of("src/test/resources/data/diglett.json"));
     // when
     stubFor(
-        get(urlEqualTo("/pokemon-species/diglett"))
+        get(urlEqualTo("/api/v2/pokemon-species/diglett"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, true);
@@ -100,7 +101,7 @@ public class PokemonServiceTest {
         Files.readString(Path.of("src/test/resources/data/mewtwo.json"));
     // when
     stubFor(
-        get(urlEqualTo("/pokemon-species/mewtwo"))
+        get(urlEqualTo("/api/v2/pokemon-species/mewtwo"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     Pokemon actualPokemon = pokemonService.getPokemon(pokemonName, true);

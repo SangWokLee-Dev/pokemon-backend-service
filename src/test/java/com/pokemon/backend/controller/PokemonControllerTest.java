@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -58,7 +59,7 @@ public class PokemonControllerTest {
         Files.readString(Path.of("src/test/resources/data/pikachu.json"));
     // when
     stubFor(
-        WireMock.get(urlEqualTo("/pokemon-species/pikachu"))
+        WireMock.get(urlEqualTo("/api/v2/pokemon-species/pikachu"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     final MockHttpServletRequestBuilder request =
@@ -79,7 +80,7 @@ public class PokemonControllerTest {
     String pokemonName = "invalid_pokemon";
     // when
     stubFor(
-        WireMock.get(urlEqualTo("/pokemon-species/invalid_pokemon"))
+        WireMock.get(urlEqualTo("/api/v2/pokemon-species/invalid_pokemon"))
             .willReturn(aResponse().withStatus(404).withBody("Not Found")));
     // then
     final MockHttpServletRequestBuilder request =
@@ -97,7 +98,7 @@ public class PokemonControllerTest {
         Files.readString(Path.of("src/test/resources/data/diglett.json"));
     // when
     stubFor(
-        WireMock.get(urlEqualTo("/pokemon-species/diglett"))
+        WireMock.get(urlEqualTo("/api/v2/pokemon-species/diglett"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     final MockHttpServletRequestBuilder request =
@@ -122,7 +123,7 @@ public class PokemonControllerTest {
         Files.readString(Path.of("src/test/resources/data/mewtwo.json"));
     // when
     stubFor(
-        WireMock.get(urlEqualTo("/pokemon-species/mewtwo"))
+        WireMock.get(urlEqualTo("/api/v2/pokemon-species/mewtwo"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     final MockHttpServletRequestBuilder request =

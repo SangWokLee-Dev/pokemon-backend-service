@@ -19,7 +19,7 @@ import static com.pokemon.backend.config.CacheConfig.POKEMON_CACHE_NAME;
 @Service
 @Log4j2
 public class PokemonHttpClient {
-  private static final String POKE_MON_SPECIES_ENDPOINT = "pokemon-species/";
+  private static final String POKE_MON_SPECIES_ENDPOINT = "/api/v2/pokemon-species/";
 
   @Value("${app.base.url.pokemon}")
   private String pokemonBaseUrl;

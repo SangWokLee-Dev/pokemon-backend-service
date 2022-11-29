@@ -8,7 +8,7 @@ import com.pokemon.backend.http.pokemon.PokemonHttpClient;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +54,7 @@ public class PokemonHttpClientTest {
         Files.readString(Path.of("src/test/resources/data/pikachu.json"));
     // when
     stubFor(
-        get(urlEqualTo("/pokemon-species/pikachu"))
+        get(urlEqualTo("/api/v2/pokemon-species/pikachu"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     HttpResponse<String> actualPokemonResponse = pokemonHttpClient.getPokemon(pokemonName);
@@ -80,7 +79,7 @@ public class PokemonHttpClientTest {
     String pokemonName = "invalid_pokemon";
     // when
     stubFor(
-        get(urlEqualTo("/pokemon-species/invalid_pokemon"))
+        get(urlEqualTo("/api/v2/pokemon-species/invalid_pokemon"))
             .willReturn(aResponse().withStatus(404).withBody("Not Found")));
     // then
     HttpResponse<String> actualPokemonResponse = pokemonHttpClient.getPokemon(pokemonName);

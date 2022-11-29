@@ -10,8 +10,8 @@ services:
     ports:
       - 8080:8080
     environment:
-      - APP_BASE_URL_POKEMON=https://pokeapi.co/api/v2/
-      - APP_BASE_URL_TRANSLATION=https://api.funtranslations.com/translate/
+      - APP_BASE_URL_POKEMON=https://pokeapi.co
+      - APP_BASE_URL_TRANSLATION=https://api.funtranslations.com
       - APP_CACHES_POKEMON_DURATION=60
       - APP_CACHES_POKEMON_SIZE=10000
       - APP_CACHES_TRANSLATION_DURATION=60
