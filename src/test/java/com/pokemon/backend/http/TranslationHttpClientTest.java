@@ -6,11 +6,8 @@ import com.jayway.jsonpath.JsonPath;
 import com.pokemon.backend.config.JsonPathConfig;
 import com.pokemon.backend.http.translation.TranslationHttpClient;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
