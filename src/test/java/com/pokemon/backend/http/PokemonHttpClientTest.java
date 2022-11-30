@@ -41,6 +41,7 @@ public class PokemonHttpClientTest {
   @AfterEach
   public void afterEach() {
     wireMockServer.resetAll();
+    cacheManager.getCache(POKEMON_CACHE_NAME).clear();
   }
 
   @Autowired private PokemonHttpClient pokemonHttpClient;

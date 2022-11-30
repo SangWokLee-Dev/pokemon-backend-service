@@ -40,6 +40,7 @@ public class TranslationHttpClientTest {
   @AfterEach
   public void afterEach() {
     wireMockServer.resetAll();
+    cacheManager.getCache(TRANSLATION_CACHE_NAME).clear();
   }
 
   @Autowired private TranslationHttpClient translationHttpClient;
