@@ -32,7 +32,7 @@ image.
 Please execute the following command from the project root directory to run pokemon backend service tests.
 
 ```
-gradle test
+gradle test -i
 ```
 
 ## API documentation

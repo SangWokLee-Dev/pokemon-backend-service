@@ -105,7 +105,7 @@ public class TranslationServiceTest {
   public void shouldReturnOriginalTextWhenTranslationResponseStatusCodeIsNotOk() {
     // given
     String text =
-        "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.";
+        "A legendary bird POKeMON that is said to appear from clouds while dropping enormous lightning bolts.";
     // when
     stubFor(
         post(urlEqualTo("/translate/yoda"))
@@ -116,7 +116,7 @@ public class TranslationServiceTest {
         translationService.getTranslatedPokemonDescription(text, "rare", true);
     assertThat(actualTranslationResponse)
         .isEqualTo(
-            "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.");
+            "A legendary bird POKeMON that is said to appear from clouds while dropping enormous lightning bolts.");
   }
 
   @Test
