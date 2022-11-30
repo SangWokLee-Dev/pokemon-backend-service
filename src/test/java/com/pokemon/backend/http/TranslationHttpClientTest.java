@@ -8,6 +8,7 @@ import com.pokemon.backend.http.translation.TranslationHttpClient;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -18,10 +19,12 @@ import java.util.concurrent.ExecutionException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static com.pokemon.backend.config.CacheConfig.TRANSLATION_CACHE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class TranslationHttpClientTest {
+  @Autowired CacheManager cacheManager;
   static WireMockServer wireMockServer = new WireMockServer(options().port(8080));
 
   @BeforeAll
@@ -48,8 +51,7 @@ public class TranslationHttpClientTest {
       throws URISyntaxException, ExecutionException, InterruptedException, IOException {
     // given
     String text =
-        "When several of these POKéMON gather, their electricity could build and cause lightning storms.";
-    // when
+        "When several of these POKeMON gather, their electricity could build and cause lightning storms.";
     String mockTranslationResponseBody =
         Files.readString(
             Path.of("src/test/resources/data/pikachu_shakespeare_translated_description.json"));
@@ -61,6 +63,12 @@ public class TranslationHttpClientTest {
     // then
     HttpResponse<String> actualTranslationResponse =
         translationHttpClient.getTranslatedText("/translate/shakespeare", text);
+    HttpResponse actualCachedTranslationResponse =
+        cacheManager
+            .getCache(TRANSLATION_CACHE_NAME)
+            .get(
+                "/translate/shakespeare-When several of these POKeMON gather, their electricity could build and cause lightning storms.",
+                HttpResponse.class);
     int actualTranslationResponseStatusCode = actualTranslationResponse.statusCode();
     String actualTranslationResponseBody = actualTranslationResponse.body();
     DocumentContext actualTranslationContext =
@@ -69,7 +77,8 @@ public class TranslationHttpClientTest {
     assertThat(actualTranslationResponseStatusCode).isEqualTo(200);
     assertThat(actualTranslatedText)
         .isEqualTo(
-            "At which hour several of these pokémon gather,  their electricity couldst buildeth and cause lightning storms.");
+            "At which hour several of these pokemon gather,  their electricity couldst buildeth and cause lightning storms.");
+    assertThat(actualCachedTranslationResponse).isNotNull();
   }
 
   @Test
@@ -79,7 +88,6 @@ public class TranslationHttpClientTest {
     // given
     String text =
         "Lives about one yard underground where it feeds on plant roots. It sometimes appears above ground.";
-    // when
     String mockTranslationResponseBody =
         Files.readString(
             Path.of("src/test/resources/data/diglett_yoda_translated_description.json"));

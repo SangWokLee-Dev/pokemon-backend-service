@@ -24,7 +24,10 @@ public class TranslationHttpClient {
 
   @Autowired private AbstractHttpClient abstractHttpClient;
 
-  @Cacheable(cacheNames = TRANSLATION_CACHE_NAME, unless = "#result.statusCode() != 200")
+  @Cacheable(
+      cacheNames = TRANSLATION_CACHE_NAME,
+      key = "#url.concat('-').concat(#text)",
+      unless = "#result.statusCode() != 200")
   public HttpResponse<String> getTranslatedText(String url, String text)
       throws URISyntaxException, ExecutionException, InterruptedException {
     HttpRequest request =

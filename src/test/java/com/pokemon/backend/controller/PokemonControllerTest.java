@@ -70,6 +70,81 @@ public class PokemonControllerTest {
     assertThat(actualPokemon.getName()).isEqualTo("pikachu");
     assertThat(actualPokemon.getHabitat()).isEqualTo("forest");
     assertThat(actualPokemon.getIsLegendary()).isEqualTo(false);
+    assertThat(actualPokemon.getDescription())
+        .isEqualTo(
+            "When several of these POKeMON gather, their electricity can build and cause lightning storms.");
+  }
+
+  @Test
+  @DisplayName(
+      "should return pokemon without description translated when translation server returns error response")
+  public void
+      shouldReturnPokemonWithoutDescriptionTranslatedWhenTranslationServerReturnsErrorResponse()
+          throws Exception {
+    // given
+    String pokemonName = "pikachu";
+    String text =
+        "When several of these POKeMON gather, their electricity can build and cause lightning storms.";
+    String mockPokemonResponseBody =
+        Files.readString(Path.of("src/test/resources/data/pikachu.json"));
+    // when
+    stubFor(
+        post(urlEqualTo("/translate/shakespeare"))
+            .withRequestBody(equalTo("text=" + text))
+            .willReturn(aResponse().withStatus(429)));
+    stubFor(
+        WireMock.get(urlEqualTo("/api/v2/pokemon-species/pikachu"))
+            .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
+    // then
+    final MockHttpServletRequestBuilder request =
+        get(String.format(GET_POKEMON_ENDPOINT, pokemonName)).accept(MediaType.APPLICATION_JSON);
+    ResultActions resultActions = mockMvc.perform(request);
+    String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
+    Pokemon actualPokemon = objectMapper.readValue(contentAsString, Pokemon.class);
+    resultActions.andExpect(status().isOk());
+    assertThat(actualPokemon.getName()).isEqualTo("pikachu");
+    assertThat(actualPokemon.getHabitat()).isEqualTo("forest");
+    assertThat(actualPokemon.getIsLegendary()).isEqualTo(false);
+    assertThat(actualPokemon.getDescription())
+        .isEqualTo(
+            "When several of these POKeMON gather, their electricity can build and cause lightning storms.");
+  }
+
+  @Test
+  @DisplayName("should return pokemon with description translated with shakespeare translation")
+  public void shouldReturnPokemonWithDescriptionTranslatedWithShakespeareTranslation()
+      throws Exception {
+    // given
+    String pokemonName = "pikachu";
+    String text =
+        "When several of these POKeMON gather, their electricity can build and cause lightning storms.";
+    String mockPokemonResponseBody =
+        Files.readString(Path.of("src/test/resources/data/pikachu.json"));
+    String mockTranslationResponseBody =
+        Files.readString(
+            Path.of("src/test/resources/data/pikachu_shakespeare_translated_description.json"));
+    // when
+    stubFor(
+        post(urlEqualTo("/translate/shakespeare"))
+            .withRequestBody(equalTo("text=" + text))
+            .willReturn(aResponse().withStatus(200).withBody(mockTranslationResponseBody)));
+    stubFor(
+        WireMock.get(urlEqualTo("/api/v2/pokemon-species/pikachu"))
+            .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
+    // then
+    final MockHttpServletRequestBuilder request =
+        get(String.format(GET_POKEMON_WITH_DESCRIPTION_TRANSLATED_ENDPOINT, pokemonName))
+            .accept(MediaType.APPLICATION_JSON);
+    ResultActions resultActions = mockMvc.perform(request);
+    String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
+    Pokemon actualPokemon = objectMapper.readValue(contentAsString, Pokemon.class);
+    resultActions.andExpect(status().isOk());
+    assertThat(actualPokemon.getName()).isEqualTo("pikachu");
+    assertThat(actualPokemon.getHabitat()).isEqualTo("forest");
+    assertThat(actualPokemon.getIsLegendary()).isEqualTo(false);
+    assertThat(actualPokemon.getDescription())
+        .isEqualTo(
+            "At which hour several of these pokemon gather,  their electricity couldst buildeth and cause lightning storms.");
   }
 
   @Test
@@ -89,13 +164,24 @@ public class PokemonControllerTest {
   }
 
   @Test
-  @DisplayName("should return pokemon with description translated when habitat is cave")
-  public void shouldReturnPokemonWithDescriptionTranslatedWhenHabitatIsCave() throws Exception {
+  @DisplayName(
+      "should return pokemon with description translated with yoda translation when habitat is cave")
+  public void shouldReturnPokemonWithDescriptionTranslatedWithYodaTranslationWhenHabitatIsCave()
+      throws Exception {
     // given
     String pokemonName = "diglett";
+    String text =
+        "Lives about one yard underground where it feeds on plant roots. It sometimes appears above ground.";
     String mockPokemonResponseBody =
         Files.readString(Path.of("src/test/resources/data/diglett.json"));
+    String mockTranslationResponseBody =
+        Files.readString(
+            Path.of("src/test/resources/data/diglett_yoda_translated_description.json"));
     // when
+    stubFor(
+        post(urlEqualTo("/translate/yoda"))
+            .withRequestBody(equalTo("text=" + text))
+            .willReturn(aResponse().withStatus(200).withBody(mockTranslationResponseBody)));
     stubFor(
         WireMock.get(urlEqualTo("/api/v2/pokemon-species/diglett"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
@@ -110,17 +196,31 @@ public class PokemonControllerTest {
     assertThat(actualPokemon.getName()).isEqualTo("diglett");
     assertThat(actualPokemon.getHabitat()).isEqualTo("cave");
     assertThat(actualPokemon.getIsLegendary()).isEqualTo(false);
+    assertThat(actualPokemon.getDescription())
+        .isEqualTo(
+            "On plant roots,  lives about one yard underground where it feeds.Above ground,  it sometimes appears.");
   }
 
   @Test
-  @DisplayName("should return pokemon with description translated when pokemon is legendary")
-  public void shouldReturnPokemonWithDescriptionTranslatedWhenPokemonIsLegendary()
-      throws Exception {
+  @DisplayName(
+      "should return pokemon with description translated with yoda translation when pokemon is legendary")
+  public void
+      shouldReturnPokemonWithDescriptionTranslatedWithYodaTranslationWhenPokemonIsLegendary()
+          throws Exception {
     // given
     String pokemonName = "mewtwo";
+    String text =
+        "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.";
     String mockPokemonResponseBody =
         Files.readString(Path.of("src/test/resources/data/mewtwo.json"));
+    String mockTranslationResponseBody =
+        Files.readString(
+            Path.of("src/test/resources/data/mewtwo_yoda_translated_description.json"));
     // when
+    stubFor(
+        post(urlEqualTo("/translate/yoda"))
+            .withRequestBody(equalTo("text=" + text))
+            .willReturn(aResponse().withStatus(200).withBody(mockTranslationResponseBody)));
     stubFor(
         WireMock.get(urlEqualTo("/api/v2/pokemon-species/mewtwo"))
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
@@ -135,5 +235,8 @@ public class PokemonControllerTest {
     assertThat(actualPokemon.getName()).isEqualTo("mewtwo");
     assertThat(actualPokemon.getHabitat()).isEqualTo("rare");
     assertThat(actualPokemon.getIsLegendary()).isEqualTo(true);
+    assertThat(actualPokemon.getDescription())
+        .isEqualTo(
+            "Created by a scientist after years of horrific gene splicing and dna engineering experiments,  it was.");
   }
 }

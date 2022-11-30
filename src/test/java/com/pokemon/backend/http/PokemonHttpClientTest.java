@@ -8,6 +8,7 @@ import com.pokemon.backend.http.pokemon.PokemonHttpClient;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,10 +20,12 @@ import java.util.concurrent.ExecutionException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static com.pokemon.backend.config.CacheConfig.POKEMON_CACHE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class PokemonHttpClientTest {
+  @Autowired CacheManager cacheManager;
   static WireMockServer wireMockServer = new WireMockServer(options().port(8080));
 
   @BeforeAll
@@ -58,6 +61,8 @@ public class PokemonHttpClientTest {
             .willReturn(aResponse().withStatus(200).withBody(mockPokemonResponseBody)));
     // then
     HttpResponse<String> actualPokemonResponse = pokemonHttpClient.getPokemon(pokemonName);
+    HttpResponse cachedActualPokemon =
+        cacheManager.getCache(POKEMON_CACHE_NAME).get("pikachu", HttpResponse.class);
     int actualPokemonResponseStatusCode = actualPokemonResponse.statusCode();
     String actualPokemonResponseBody = actualPokemonResponse.body();
     DocumentContext actualPokemonContext =
@@ -73,7 +78,8 @@ public class PokemonHttpClientTest {
     assertThat(actualPokemonIsLegendary).isEqualTo(false);
     assertThat(actualPokemonDescriptions)
         .contains(
-            "When several of these POKéMON gather,\ntheir electricity can build and cause\nlightning storms.");
+            "When several of these POKeMON gather,\ntheir electricity can build and cause\nlightning storms.");
+    assertThat(cachedActualPokemon).isNotNull();
   }
 
   @Test

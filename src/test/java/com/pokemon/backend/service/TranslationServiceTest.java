@@ -52,7 +52,7 @@ public class TranslationServiceTest {
         translationService.getTranslatedPokemonDescription(text, "forest", false);
     assertThat(actualTranslationResponse)
         .isEqualTo(
-            "At which hour several of these pokémon gather,  their electricity couldst buildeth and cause lightning storms.");
+            "At which hour several of these pokemon gather,  their electricity couldst buildeth and cause lightning storms.");
   }
 
   @Test
