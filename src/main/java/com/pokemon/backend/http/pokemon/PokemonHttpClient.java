@@ -1,7 +1,6 @@
 package com.pokemon.backend.http.pokemon;
 
 import com.pokemon.backend.http.AbstractHttpClient;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,7 +16,6 @@ import java.util.concurrent.ExecutionException;
 import static com.pokemon.backend.config.CacheConfig.POKEMON_CACHE_NAME;
 
 @Service
-@Log4j2
 public class PokemonHttpClient {
   private static final String POKEMON_SPECIES_ENDPOINT = "/api/v2/pokemon-species/";
 
