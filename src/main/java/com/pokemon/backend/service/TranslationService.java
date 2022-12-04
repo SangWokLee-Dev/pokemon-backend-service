@@ -17,8 +17,8 @@ import java.util.concurrent.ExecutionException;
 @Service
 @Log4j2
 public class TranslationService {
-  private static final String YODA_TRANSLATION_URL = "/translate/yoda";
-  private static final String SHAKESPEARE_TRANSLATION_URL = "/translate/shakespeare";
+  private static final String YODA_TRANSLATION_URL_PATH = "/translate/yoda";
+  private static final String SHAKESPEARE_TRANSLATION_URL_PATH = "/translate/shakespeare";
   @Autowired private TranslationHttpClient translationHttpClient;
   @Autowired private JsonPathConfig jsonPathConfig;
 
@@ -30,25 +30,27 @@ public class TranslationService {
         habitat,
         isLegendary);
     return description != null && !description.isEmpty()
-        ? getTranslatedText(description, getTranslationUrl(habitat, isLegendary))
+        ? getTranslatedText(description, getTranslationUrlPath(habitat, isLegendary))
         : description;
   }
 
-  private String getTranslatedText(String text, String translationUrl) {
+  private String getTranslatedText(String text, String translationUrlPath) {
     log.info(
-        "Received request to translate text: {} from translation url: {}", text, translationUrl);
+        "Received request to translate text: {} from translation url path: {}",
+        text,
+        translationUrlPath);
     try {
       HttpResponse<String> translationResponse =
-          translationHttpClient.getTranslatedText(translationUrl, text);
+          translationHttpClient.getTranslatedText(translationUrlPath, text);
       int translationResponseStatusCode = translationResponse.statusCode();
       String translatedText =
           translationResponseStatusCode == HttpStatus.OK.value()
               ? getTranslatedText(translationResponse)
               : null;
       log.info(
-          "Received translated text: {} from translation url: {} with original text: {}",
+          "Received translated text: {} from translation url path: {} with original text: {}",
           translatedText,
-          translationUrl,
+          translationUrlPath,
           text);
       text = translatedText != null && !translatedText.isEmpty() ? translatedText : text;
     } catch (URISyntaxException | ExecutionException | InterruptedException exception) {
@@ -64,9 +66,9 @@ public class TranslationService {
     return translationContext.read("$['contents']['translated']");
   }
 
-  private String getTranslationUrl(String habitat, Boolean isLegendary) {
+  private String getTranslationUrlPath(String habitat, Boolean isLegendary) {
     return habitat != null && !habitat.isEmpty() && habitat.equals(Habitat.CAVE.name) || isLegendary
-        ? YODA_TRANSLATION_URL
-        : SHAKESPEARE_TRANSLATION_URL;
+        ? YODA_TRANSLATION_URL_PATH
+        : SHAKESPEARE_TRANSLATION_URL_PATH;
   }
 }
