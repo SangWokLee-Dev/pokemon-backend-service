@@ -26,13 +26,13 @@ public class TranslationHttpClient {
 
   @Cacheable(
       cacheNames = TRANSLATION_CACHE_NAME,
-      key = "#url.concat('-').concat(#text)",
+      key = "#translationUrlPath.concat('-').concat(#text)",
       unless = "#result.statusCode() != 200")
-  public HttpResponse<String> getTranslatedText(String url, String text)
+  public HttpResponse<String> getTranslatedText(String translationUrlPath, String text)
       throws URISyntaxException, ExecutionException, InterruptedException {
     HttpRequest request =
         HttpRequest.newBuilder()
-            .uri(new URI(translationBaseUrl + url))
+            .uri(new URI(translationBaseUrl + translationUrlPath))
             .version(HttpClient.Version.HTTP_2)
             .POST(HttpRequest.BodyPublishers.ofString("text=" + text))
             .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
